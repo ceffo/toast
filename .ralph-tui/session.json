@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "sessionId": "62347e35-7ae0-4dd4-8595-f50f81f31e01",
+  "status": "running",
+  "startedAt": "2026-06-03T20:04:24.272Z",
+  "updatedAt": "2026-06-03T20:05:13.482Z",
+  "currentIteration": 0,
+  "maxIterations": 10,
+  "tasksCompleted": 0,
+  "isPaused": false,
+  "agentPlugin": "claude",
+  "trackerState": {
+    "plugin": "beads-rust",
+    "epicId": "toast-xrv",
+    "totalTasks": 6,
+    "tasks": [
+      {
+        "id": "toast-xrv.1",
+        "title": "US-001: position.go — Position type and 6 position constants",
+        "status": "open",
+        "completedInSession": false
+      },
+      {
+        "id": "toast-xrv.2",
+        "title": "US-002: definition.go — FontStyle, AlertDefinition, built-in alert vars",
+        "status": "open",
+        "completedInSession": false
+      },
+      {
+        "id": "toast-xrv.3",
+        "title": "US-003: wrap.go — hangingWrap text helper",
+        "status": "open",
+        "completedInSession": false
+      },
+      {
+        "id": "toast-xrv.4",
+        "title": "US-004: alert.go — internal alert struct and render() using lipgloss v2",
+        "status": "open",
+        "completedInSession": false
+      },
+      {
+        "id": "toast-xrv.5",
+        "title": "US-005: model.go — Model struct, constructor, With* builders, Init/Update/Render/HasActiveAlert",
+        "status": "open",
+        "completedInSession": false
+      },
+      {
+        "id": "toast-xrv.6",
+        "title": "US-006: example/main.go — working example app demonstrating all features",
+        "status": "open",
+        "completedInSession": false
+      }
+    ]
+  },
+  "iterations": [],
+  "skippedTaskIds": [],
+  "cwd": "/Users/moncefnaji/code/github.com/toast",
+  "activeTaskIds": [],
+  "subagentPanelVisible": false
+}
