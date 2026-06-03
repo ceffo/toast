@@ -9,6 +9,16 @@ after each iteration and it's included in prompts for context.
 
 ---
 
+## 2026-06-03 - toast-xrv.4
+- What was implemented: unexported `alert` struct (message, deathTime, prefix, foreColor colorful.Color, style lipgloss.Style, width/minWidth/curLerpStep float64, position Position) and `render() string` method.
+- Files changed: `alert.go` (new), `go.mod`/`go.sum` updated (go-colorful promoted to direct dep via `go mod tidy`)
+- **Learnings:**
+  - `colorful.Color{}` zero value is black (R=0,G=0,B=0); calling `.BlendLab(foreColor, t)` on it lerps from black to foreColor as t goes 0→1.
+  - `blended.Hex()` returns `"#rrggbb"` which lipgloss accepts directly as `lipgloss.Color(hex)`.
+  - Dynamic width mode: when `minWidth > 0`, measure natural content width via `lipgloss.Width(content) + 4` (4 = border + padding overhead per side × 2), then clamp between minWidth and width (max). Static mode just uses `width`.
+  - In lipgloss v2 (`charm.land/lipgloss/v2`), `.Border(lipgloss.RoundedBorder())` sets all four sides; `.Padding(0, 1)` adds 1-cell left/right padding; chaining on an existing `lipgloss.Style` field works fine since Style is a value type.
+---
+
 ## 2026-06-03 - toast-xrv.3
 - What was implemented: `hangingWrap(prefix, msg string, textWidth int) string` helper that wraps text with a hanging indent so subsequent lines align under the first character of `msg`.
 - Files changed: `wrap.go` (new), `go.sum` (updated via `go mod tidy`)

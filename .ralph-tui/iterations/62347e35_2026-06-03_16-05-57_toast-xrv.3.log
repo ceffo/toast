@@ -1,0 +1,55 @@
+# Iteration 3 Log
+
+## Metadata
+
+- **Task ID**: toast-xrv.3
+- **Task Title**: US-003: wrap.go — hangingWrap text helper
+- **Description**: Implement the hangingWrap helper that wraps alert message text with a hanging indent for the prefix symbol.
+
+## Acceptance Criteria
+- [ ] `hangingWrap(prefix, msg string, textWidth int) string` functi...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-06-03T20:05:57.792Z
+- **Ended At**: 2026-06-03T20:07:08.319Z
+- **Duration**: 1m 10s
+- **Input Tokens**: 35
+- **Output Tokens**: 3819
+- **Total Tokens**: 3854
+- **Agent**: claude
+- **Model**: claude-sonnet-4-6
+- **Epic**: toast-xrv
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+I'll start by studying the progress file and existing code structure.
+[94m[Read][0m [95m/Users/moncefnaji/code/github.com/toast/.ralph-tui/progress.md[0m
+[94m[Glob][0m [95m/Users/moncefnaji/code/github.com/toast[0m pattern: [96m**/*.go[0m
+[94m[Read][0m [95m/Users/moncefnaji/code/github.com/toast/definition.go[0m
+[94m[Read][0m [95m/Users/moncefnaji/code/github.com/toast/go.mod[0m
+Now I have enough context. Let me implement `wrap.go`.
+[94m[Write][0m [95m/Users/moncefnaji/code/github.com/toast/wrap.go[0m "package toast
+
+import (
+	"strings"
+
+	"charm.land/lipgloss/v2"
+)
+
+// hangingWrap formats prefix + msg with a hanging indent so subsequent
+// lines align under the first character of msg, wrapping at te... (1374 chars)"
+[94m[Bash][0m Build and vet the toast package $ go build ./... && go vet ./...
+
+[91m[Error: Exit code 1
+wrap.go:6:2: missing go.sum entry for module providing package charm.land/lipgloss/v2 (imported by github.com/ceffo/toast); to add:
+	go get github.com/ceffo/toast][0m
+[94m[Bash][0m Tidy dependencies and build $ go mod tidy && go build ./... && go vet ./...
+Both `go build ./...` and `go vet ./...` pass. Now I'll close the bead, flush, and update progress.
+[94m[Bash][0m Close the bead $ br close toast-xrv.3 --reason "Implemented hangingWrap helper in wrap.go using lipgloss.Width for pr...
+[94m[Bash][0m Flush tracker state to JSONL $ br sync --flush-only
+[94m[Edit][0m [95m/Users/moncefnaji/code/github.com/toast/.ralph-tui/progress.md[0m edit: "## 2026-06-03 - toast-xrv.2" → "## 2026-06-03 - toast-xrv.3
+- What was implemented..."
+`wrap.go` is implemented and both quality checks pass. The `hangingWrap` function uses `lipgloss.Width` for accurate Unicode/NerdFont prefix measurement and wraps words greedily at `textWidth`.
+
+<promise>COMPLETE</promise>
