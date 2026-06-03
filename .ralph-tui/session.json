@@ -3,10 +3,10 @@
   "sessionId": "62347e35-7ae0-4dd4-8595-f50f81f31e01",
   "status": "running",
   "startedAt": "2026-06-03T20:04:24.272Z",
-  "updatedAt": "2026-06-03T20:05:56.381Z",
-  "currentIteration": 1,
+  "updatedAt": "2026-06-03T20:07:08.409Z",
+  "currentIteration": 2,
   "maxIterations": 10,
-  "tasksCompleted": 1,
+  "tasksCompleted": 2,
   "isPaused": false,
   "agentPlugin": "claude",
   "trackerState": {
@@ -23,8 +23,8 @@
       {
         "id": "toast-xrv.2",
         "title": "US-002: definition.go — FontStyle, AlertDefinition, built-in alert vars",
-        "status": "open",
-        "completedInSession": false
+        "status": "completed",
+        "completedInSession": true
       },
       {
         "id": "toast-xrv.3",
@@ -62,6 +62,16 @@
       "durationMs": 45519,
       "startedAt": "2026-06-03T20:04:27.910Z",
       "endedAt": "2026-06-03T20:05:13.429Z"
+    },
+    {
+      "iteration": 2,
+      "status": "completed",
+      "taskId": "toast-xrv.2",
+      "taskTitle": "US-002: definition.go — FontStyle, AlertDefinition, built-in alert vars",
+      "taskCompleted": true,
+      "durationMs": 41412,
+      "startedAt": "2026-06-03T20:05:14.930Z",
+      "endedAt": "2026-06-03T20:05:56.342Z"
     }
   ],
   "skippedTaskIds": [],

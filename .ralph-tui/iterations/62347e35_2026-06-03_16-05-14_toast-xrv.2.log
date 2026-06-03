@@ -1,0 +1,53 @@
+# Iteration 2 Log
+
+## Metadata
+
+- **Task ID**: toast-xrv.2
+- **Task Title**: US-002: definition.go — FontStyle, AlertDefinition, built-in alert vars
+- **Description**: Implement the FontStyle enum, AlertDefinition struct, and built-in package-level alert vars.
+
+## Acceptance Criteria
+- [ ] `type FontStyle` enum with FontASCII, FontUnicode, FontNerdFont constants
+- [...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-06-03T20:05:14.930Z
+- **Ended At**: 2026-06-03T20:05:56.342Z
+- **Duration**: 41s
+- **Input Tokens**: 34
+- **Output Tokens**: 1930
+- **Total Tokens**: 1964
+- **Agent**: claude
+- **Model**: claude-sonnet-4-6
+- **Epic**: toast-xrv
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+Let me study the progress file and existing code before implementing.
+[94m[Read][0m [95m/Users/moncefnaji/code/github.com/toast/.ralph-tui/progress.md[0m
+[94m[Glob][0m [95m/Users/moncefnaji/code/github.com/toast[0m pattern: [96m**/*.go[0m
+[94m[Read][0m [95m/Users/moncefnaji/code/github.com/toast/position.go[0m
+Now I have all the context needed. Let me implement `definition.go`.
+[94m[Write][0m [95m/Users/moncefnaji/code/github.com/toast/definition.go[0m "package toast
+
+// FontStyle selects the glyph set used for alert prefixes.
+type FontStyle string
+
+const (
+	FontASCII    FontStyle = "ascii"
+	FontUnicode  FontStyle = "unicode"
+	FontNerdFont FontStyle ... (1368 chars)"
+[94m[Bash][0m Build and vet the toast module $ go build ./... && go vet ./...
+Both pass. Now close the bead and flush.
+[94m[Bash][0m Close bead toast-xrv.2 $ br close toast-xrv.2 --reason "Implemented FontStyle enum, AlertDefinition struct, and 12 built-in a...
+[94m[Bash][0m Flush tracker state to JSONL $ br sync --flush-only
+Now append to the progress log.
+[94m[Read][0m [95m/Users/moncefnaji/code/github.com/toast/.ralph-tui/progress.md[0m
+[94m[Edit][0m [95m/Users/moncefnaji/code/github.com/toast/.ralph-tui/progress.md[0m edit: "---
+
+## 2026-06-03 - toast-xrv.1" → "---
+
+## 2026-06-03 - toast-xrv.2
+- What was implem..."
+<promise>COMPLETE</promise>
