@@ -1,0 +1,84 @@
+# Iteration 5 Log
+
+## Metadata
+
+- **Task ID**: toast-xrv.5
+- **Task Title**: US-005: model.go — Model struct, constructor, With* builders, Init/Update/Render/HasActiveAlert
+- **Description**: Implement the public Model and all its methods. This is the main library surface.
+
+## Acceptance Criteria
+
+### Struct & constructor
+- [ ] `Model` struct with: queue []alert, maxDepth int, width int, m...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-06-03T20:09:30.773Z
+- **Ended At**: 2026-06-03T20:13:04.808Z
+- **Duration**: 3m 34s
+- **Input Tokens**: 63
+- **Output Tokens**: 14481
+- **Total Tokens**: 14544
+- **Agent**: claude
+- **Model**: claude-sonnet-4-6
+- **Epic**: toast-xrv
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+I'll study the existing codebase before implementing `model.go`.
+[94m[Read][0m [95m/Users/moncefnaji/code/github.com/toast[0m
+
+[91m[Error: EISDIR: illegal operation on a directory, read '/Users/moncefnaji/code/github.com/toast'][0m
+[94m[Read][0m [95m/Users/moncefnaji/code/github.com/toast/.ralph-tui/progress.md[0m
+[94m[Glob][0m [95m/Users/moncefnaji/code/github.com/toast[0m pattern: [96m**/*.go[0m
+[94m[Read][0m [95m/Users/moncefnaji/code/github.com/toast/go.mod[0m
+[94m[Read][0m [95m/Users/moncefnaji/code/github.com/toast/alert.go[0m
+[94m[Read][0m [95m/Users/moncefnaji/code/github.com/toast/definition.go[0m
+[94m[Read][0m [95m/Users/moncefnaji/code/github.com/toast/position.go[0m
+[94m[Read][0m [95m/Users/moncefnaji/code/github.com/toast/wrap.go[0m
+Let me check the go.sum for bubbletea and query context7 for the lipgloss compositor API.
+[94m[Bash][0m Check for bubbletea in go.sum $ grep -i "bubbletea\|tea" /Users/moncefnaji/code/github.com/toast/go.sum | head -20
+[94m[ToolSearch][0m query: [93mselect:mcp__plugin_context7_context7__resolve-library-id,mcp__plugin_context7_context7__query-docs[0m
+[94m[mcp__plugin_context7_context7__resolve-library-id][0m query: [93mNewCompositor overlay placement rendering content[0m
+[94m[mcp__plugin_context7_context7__resolve-library-id][0m query: [93mKeyPressMsg tea.Cmd tea.Tick Update Model[0m
+[94m[mcp__plugin_context7_context7__query-docs][0m query: [93mNewCompositor overlay placement rendering content compositing layers[0m
+[94m[mcp__plugin_context7_context7__query-docs][0m query: [93mKeyPressMsg tea.Cmd tea.Tick tickMsg Update Model v2[0m
+Now I have everything I need. Let me implement `model.go`.
+[94m[Write][0m [95m/Users/moncefnaji/code/github.com/toast/model.go[0m "package toast
+
+import (
+	"time"
+
+	tea "charm.land/bubbletea/v2"
+	"charm.land/lipgloss/v2"
+	colorful "github.com/lucasb-eyer/go-colorful"
+)
+
+type alertMsg struct {
+	a alert
+}
+
+type tickMsg struct{}
+
+//... (4307 chars)"
+Now add bubbletea v2 to go.mod and run the quality gates.
+[94m[Bash][0m Add bubbletea v2 dependency $ go get charm.land/bubbletea/v2 2>&1
+[94m[Bash][0m Run quality gates $ go build ./... 2>&1 && go vet ./... 2>&1 && echo "ALL PASS"
+Both quality gates pass. Now close the bead and document learnings.
+[94m[Bash][0m Close bead $ br close toast-xrv.5 --reason "model.go: Model struct, constructor, With* builders, Init/Update/Rend...
+[94m[Read][0m [95m/Users/moncefnaji/code/github.com/toast/.ralph-tui/progress.md[0m
+[94m[Edit][0m [95m/Users/moncefnaji/code/github.com/toast/.ralph-tui/progress.md[0m edit: "---
+
+## 2026-06-03 - toast-xrv.4" → "---
+
+## 2026-06-03 - toast-xrv.5
+- What was implem..."
+[94m[Bash][0m Flush tracker state to JSONL $ br sync --flush-only 2>&1
+<promise>COMPLETE</promise>
+
+`model.go` is implemented and both `go build ./...` and `go vet ./...` pass. Key implementation notes:
+
+- **bubbletea v2** (`charm.land/bubbletea/v2 v2.0.7`) added as a new direct dependency; uses `tea.KeyPressMsg` and `tea.Tick`
+- **Compositing** via `lipgloss.NewCompositor(bg, fg).Render()` with `lipgloss.NewLayer(s).X(x).Y(y)` for alert placement
+- **Queue mutations** use defensive copies (`append([]alert{}, m.queue...)`) to avoid aliasing the shared underlying array in value-receiver `Update`
+- **`font FontStyle`** in `New()` is ignored (`_`) — font is already encoded in the `AlertDefinition` the caller selects

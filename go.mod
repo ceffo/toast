@@ -3,12 +3,12 @@ module github.com/ceffo/toast
 go 1.25.0
 
 require (
+	charm.land/bubbletea/v2 v2.0.7
 	charm.land/lipgloss/v2 v2.0.3
 	github.com/lucasb-eyer/go-colorful v1.4.0
 )
 
 require (
-	charm.land/bubbletea/v2 v2.0.7 // indirect
 	github.com/charmbracelet/colorprofile v0.4.3 // indirect
 	github.com/charmbracelet/ultraviolet v0.0.0-20260525132238-948f4557a654 // indirect
 	github.com/charmbracelet/x/ansi v0.11.7 // indirect

@@ -9,6 +9,17 @@ after each iteration and it's included in prompts for context.
 
 ---
 
+## 2026-06-03 - toast-xrv.6
+- What was implemented: `example/main.go` — runnable bubbletea v2 TUI demonstrating all 6 positions (keys 1–6), all 4 built-in alert types (i/w/e/d), a custom `SuccessAlert` `AlertDefinition` (s), `WithQueueDepth` burst (b, fires 5 alerts), `WithAllowEscToClose` + `HasActiveAlert` ESC guard, and `WithMinWidth`. `View()` returns `tea.View{AltScreen: true}`.
+- Files changed: `example/main.go` (new), `go.mod`/`go.sum` updated (`charm.land/bubbletea/v2` promoted from indirect to direct dep via `go mod tidy`)
+- **Learnings:**
+  - Example lives as `package main` in `./example/` within the same module — no new transitive deps introduced since bubbletea was already in go.mod; `go mod tidy` promotes it to direct. No separate module or build tag needed when there are no novel deps.
+  - ESC guard pattern: check `m.toast.HasActiveAlert()` **before** calling `m.toast.Update(msg)`. If active, skip `tea.Quit`; toast.Update then processes the ESC and pops the front alert. Both the outer model and toast model inspect the same immutable message — no double-pop.
+  - Burst demo: capture loop variable with `k := k` before the closure to avoid the classic loop-var capture bug when generating multiple cmds in a for loop.
+  - `tea.Batch(cmds...)` with an empty slice returns nil, which is valid for bubbletea — no guard needed.
+  - `View()` in bubbletea v2 returns `tea.View` struct, not `string`. Set `AltScreen: true` to engage the alternate screen buffer.
+---
+
 ## 2026-06-03 - toast-xrv.5
 - What was implemented: `Model` struct with queue/maxDepth/width/minWidth/duration/position/allowEscToClose/style fields; `New()` constructor; `WithMinWidth`, `WithPosition`, `WithQueueDepth`, `WithAllowEscToClose` builders; `Init()`/`Update()`/`HasActiveAlert()`/`NewAlertCmd()`/`Render()` methods; internal `alertMsg`/`tickMsg` types; `alertCoords()` helper for position math.
 - Files changed: `model.go` (new), `go.mod`/`go.sum` updated (`charm.land/bubbletea/v2 v2.0.7` added as direct dep)
