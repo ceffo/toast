@@ -1,0 +1,56 @@
+# Iteration 1 Log
+
+## Metadata
+
+- **Task ID**: toast-xrv.1
+- **Task Title**: US-001: position.go — Position type and 6 position constants
+- **Description**: Implement the Position type and all 6 position constants.
+
+## Acceptance Criteria
+- [ ] `type Position` defined (string or int enum)
+- [ ] 6 constants: TopLeft, TopCenter, TopRight, BottomLeft, Bottom...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-06-03T20:04:27.910Z
+- **Ended At**: 2026-06-03T20:05:13.429Z
+- **Duration**: 45s
+- **Input Tokens**: 39
+- **Output Tokens**: 1896
+- **Total Tokens**: 1935
+- **Agent**: claude
+- **Model**: claude-sonnet-4-6
+- **Epic**: toast-xrv
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+Let me start by checking the project structure and progress file.
+[94m[Read][0m [95m/Users/moncefnaji/code/github.com/toast[0m
+
+[91m[Error: EISDIR: illegal operation on a directory, read '/Users/moncefnaji/code/github.com/toast'][0m
+[94m[Glob][0m [95m/Users/moncefnaji/code/github.com/toast[0m pattern: [96m**/*.go[0m
+[94m[Bash][0m $ \ls /Users/moncefnaji/code/github.com/toast
+[94m[Read][0m [95m/Users/moncefnaji/code/github.com/toast/go.mod[0m
+[94m[Bash][0m $ \ls /Users/moncefnaji/code/github.com/toast/.ralph-tui 2>/dev/null || echo "no .ralph-tui"
+[94m[Read][0m [95m/Users/moncefnaji/code/github.com/toast/.ralph-tui/progress.md[0m
+The project is essentially empty — no Go source files yet. I'll create the `position.go` file with the required type, constants, and method.
+[94m[Read][0m [95m/Users/moncefnaji/code/github.com/toast/CONTEXT.md[0m
+Now I have all the context I need. Let me create `position.go`:
+[94m[Write][0m [95m/Users/moncefnaji/code/github.com/toast/position.go[0m "package toast
+
+// Position specifies where on screen an Alert overlay appears.
+type Position string
+
+const (
+	// UnspecifiedPosition is the zero value; callers must set a real position.
+	UnspecifiedPo... (672 chars)"
+[94m[Bash][0m $ go build ./... && go vet ./...
+Both pass. Now let me close the bead and update progress:
+[94m[Bash][0m $ br close toast-xrv.1 --reason "Implemented Position type with 6 constants and IsValid() method"
+[94m[Bash][0m $ br sync --flush-only
+[94m[Edit][0m [95m/Users/moncefnaji/code/github.com/toast/.ralph-tui/progress.md[0m edit: "## Codebase Patterns (Study These First)
+
+*Add reu..." → "## Codebase Patterns (Study These First)
+
+- **Enum..."
+<promise>COMPLETE</promise>
