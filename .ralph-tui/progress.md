@@ -9,6 +9,18 @@ after each iteration and it's included in prompts for context.
 
 ---
 
+## 2026-06-03 - toast-xrv.5
+- What was implemented: `Model` struct with queue/maxDepth/width/minWidth/duration/position/allowEscToClose/style fields; `New()` constructor; `WithMinWidth`, `WithPosition`, `WithQueueDepth`, `WithAllowEscToClose` builders; `Init()`/`Update()`/`HasActiveAlert()`/`NewAlertCmd()`/`Render()` methods; internal `alertMsg`/`tickMsg` types; `alertCoords()` helper for position math.
+- Files changed: `model.go` (new), `go.mod`/`go.sum` updated (`charm.land/bubbletea/v2 v2.0.7` added as direct dep)
+- **Learnings:**
+  - bubbletea v2 import path is `charm.land/bubbletea/v2` (mirrors lipgloss v2 pattern). `tea.KeyPressMsg` replaces v1's `tea.KeyMsg`; `msg.String() == "esc"` for escape.
+  - `tea.Tick(d, fn)` is still available in v2 with the same signature.
+  - `lipgloss.Height(s)` is available in lipgloss v2 alongside `lipgloss.Width(s)` — use both to measure content dimensions for compositor placement.
+  - `lipgloss.NewCompositor(layers...)` + `lipgloss.NewLayer(s).X(x).Y(y)` is the v2 API for overlay compositing; `compositor.Render()` returns the composited string.
+  - Queue mutations in `Update` (value receiver) must make a defensive copy (`append([]alert{}, m.queue...)`) before modifying elements to avoid aliasing the shared underlying array.
+  - `font FontStyle` parameter in `New()` is intentionally ignored (`_`) — the font is already encoded in the `AlertDefinition` the caller picks (e.g., `InfoAlertNerdFont`); Model itself is font-agnostic.
+---
+
 ## 2026-06-03 - toast-xrv.4
 - What was implemented: unexported `alert` struct (message, deathTime, prefix, foreColor colorful.Color, style lipgloss.Style, width/minWidth/curLerpStep float64, position Position) and `render() string` method.
 - Files changed: `alert.go` (new), `go.mod`/`go.sum` updated (go-colorful promoted to direct dep via `go mod tidy`)
