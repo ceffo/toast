@@ -10,7 +10,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Memory**: use engram tools (`mem_save`, `mem_search`, `mem_context`, `mem_session_summary`) for all long-term memory. Save decisions, bugs, and non-obvious discoveries immediately — do not wait to be asked.
 
-**Tests**: any change to library code must include updated or new tests. Run `just check` as the validation gate before reporting a task done.
+**Tests**: any change to library code must include updated or new tests. Run `just check` as the validation gate before reporting a task done. All test files must use `package toast_test` (external package). To test unexported symbols, expose them via `export_test.go` (a file in `package toast` that re-exports internals — compiled only during `go test`).
 
 **Commits**: follow Conventional Commits — `type(scope): short description`. Types: `feat`, `fix`, `refactor`, `test`, `chore`, `docs`. Scope is the file or concept being changed (e.g. `model`, `wrap`, `alert`, `example`). No task IDs, story IDs, or internal tracking references in commit messages.
 

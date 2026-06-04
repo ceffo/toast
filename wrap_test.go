@@ -1,6 +1,10 @@
-package toast
+package toast_test
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/ceffo/toast"
+)
 
 func TestHangingWrap(t *testing.T) {
 	tests := []struct {
@@ -61,9 +65,9 @@ func TestHangingWrap(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			got := hangingWrap(tc.prefix, tc.msg, tc.width)
+			got := toast.HangingWrap(tc.prefix, tc.msg, tc.width)
 			if got != tc.want {
-				t.Errorf("hangingWrap(%q, %q, %d)\n got:  %q\n want: %q",
+				t.Errorf("HangingWrap(%q, %q, %d)\n got:  %q\n want: %q",
 					tc.prefix, tc.msg, tc.width, got, tc.want)
 			}
 		})
