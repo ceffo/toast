@@ -11,9 +11,9 @@ const (
 
 // AlertDefinition holds the visual configuration for one alert level.
 type AlertDefinition struct {
-	Prefix   string
+	Prefix    string
 	ForeColor string
-	Position Position // zero value means use the model default
+	Position  Position // zero value means use the model default
 }
 
 // Built-in alert definitions — one per level × font style.

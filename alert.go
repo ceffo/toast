@@ -3,8 +3,8 @@ package toast
 import (
 	"time"
 
-	colorful "github.com/lucasb-eyer/go-colorful"
 	"charm.land/lipgloss/v2"
+	colorful "github.com/lucasb-eyer/go-colorful"
 )
 
 type alert struct {
