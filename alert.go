@@ -19,9 +19,28 @@ type alert struct {
 	position    Position
 }
 
+// fadeIntensity maps curLerpStep (0→1 over the alert's lifetime) to a
+// color-blend factor with three phases:
+//
+//	0.00–0.15  fade in  (0→1)
+//	0.15–0.75  hold     (1)
+//	0.75–1.00  fade out (1→0)
+func (a alert) fadeIntensity() float64 {
+	const fadeIn = 0.15
+	const fadeOut = 0.75
+	switch {
+	case a.curLerpStep < fadeIn:
+		return a.curLerpStep / fadeIn
+	case a.curLerpStep > fadeOut:
+		return 1.0 - (a.curLerpStep-fadeOut)/(1.0-fadeOut)
+	default:
+		return 1.0
+	}
+}
+
 func (a alert) render() string {
-	// Lab-space lerp: black → foreColor
-	blended := colorful.Color{}.BlendLab(a.foreColor, a.curLerpStep)
+	// Lab-space lerp: foreColor → black over the last 25% of the lifetime.
+	blended := a.foreColor.BlendLab(colorful.Color{}, 1.0-a.fadeIntensity())
 	col := lipgloss.Color(blended.Hex())
 
 	// Inner content area: border (1 each side) + padding (1 each side) = 4 total overhead

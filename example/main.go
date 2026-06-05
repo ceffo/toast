@@ -17,23 +17,38 @@ var SuccessAlert = toast.AlertDefinition{
 	Position:  toast.TopCenter,
 }
 
+const (
+	toastWidth   = 60
+	minDuration  = 500 * time.Millisecond
+	maxDuration  = 10 * time.Second
+	durationStep = 500 * time.Millisecond
+)
+
 type model struct {
-	toast  toast.Model
-	width  int
-	height int
+	toast    toast.Model
+	width    int
+	height   int
+	duration time.Duration
+	position toast.Position
+}
+
+func buildToast(duration time.Duration, position toast.Position) toast.Model {
+	return toast.New(toastWidth, toast.FontNerdFont, duration).
+		WithMinWidth(20).
+		WithPosition(position).
+		WithQueueDepth(5).
+		WithAllowEscToClose()
 }
 
 func initialModel() model {
-	t := toast.New(60, toast.FontUnicode, 3*time.Second).
-		WithMinWidth(20).
-		WithPosition(toast.TopRight).
-		WithQueueDepth(5).
-		WithAllowEscToClose()
-
+	dur := 2 * time.Second
+	pos := toast.TopRight
 	return model{
-		toast:  t,
-		width:  80,
-		height: 24,
+		toast:    buildToast(dur, pos),
+		width:    80,
+		height:   24,
+		duration: dur,
+		position: pos,
 	}
 }
 
@@ -82,19 +97,37 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				cmds = append(cmds, m.toast.NewAlertCmd(toast.InfoAlertUnicode, fmt.Sprintf("Burst alert #%d of 5", k)))
 			}
 
+		// Duration — + increases, - decreases (step: 500ms, range: 500ms–10s)
+		case "+":
+			if m.duration < maxDuration {
+				m.duration += durationStep
+				m.toast = buildToast(m.duration, m.position)
+			}
+		case "-":
+			if m.duration > minDuration {
+				m.duration -= durationStep
+				m.toast = buildToast(m.duration, m.position)
+			}
+
 		// 6 position bindings
 		case "1":
-			m.toast = m.toast.WithPosition(toast.TopLeft)
+			m.position = toast.TopLeft
+			m.toast = m.toast.WithPosition(m.position)
 		case "2":
-			m.toast = m.toast.WithPosition(toast.TopCenter)
+			m.position = toast.TopCenter
+			m.toast = m.toast.WithPosition(m.position)
 		case "3":
-			m.toast = m.toast.WithPosition(toast.TopRight)
+			m.position = toast.TopRight
+			m.toast = m.toast.WithPosition(m.position)
 		case "4":
-			m.toast = m.toast.WithPosition(toast.BottomLeft)
+			m.position = toast.BottomLeft
+			m.toast = m.toast.WithPosition(m.position)
 		case "5":
-			m.toast = m.toast.WithPosition(toast.BottomCenter)
+			m.position = toast.BottomCenter
+			m.toast = m.toast.WithPosition(m.position)
 		case "6":
-			m.toast = m.toast.WithPosition(toast.BottomRight)
+			m.position = toast.BottomRight
+			m.toast = m.toast.WithPosition(m.position)
 		}
 	}
 
@@ -107,10 +140,15 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, tea.Batch(cmds...)
 }
 
-const helpLine = "i=info  w=warn  e=error  d=debug  s=custom  b=burst  " +
-	"1=top-left  2=top-center  3=top-right  " +
-	"4=bottom-left  5=bottom-center  6=bottom-right  " +
-	"esc/q=quit"
+func (m model) helpLine() string {
+	return fmt.Sprintf(
+		"i=info  w=warn  e=error  d=debug  s=custom  b=burst  "+
+			"1=top-left  2=top-center  3=top-right  "+
+			"4=bottom-left  5=bottom-center  6=bottom-right  "+
+			"+/-=duration(%s)  esc/q=quit",
+		m.duration,
+	)
+}
 
 func (m model) View() tea.View {
 	height := m.height
@@ -124,7 +162,7 @@ func (m model) View() tea.View {
 		rows[i] = fmt.Sprintf("  Row %3d │ Lorem ipsum dolor sit amet, consectetur adipiscing elit.", i+1)
 	}
 
-	content := strings.Join(rows, "\n") + "\n\n" + helpLine
+	content := strings.Join(rows, "\n") + "\n\n" + m.helpLine()
 
 	return tea.View{
 		Content:   m.toast.Render(content),
