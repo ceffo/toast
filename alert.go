@@ -14,7 +14,6 @@ type alert struct {
 	prefix    string
 	foreColor colorful.Color
 	style     lipgloss.Style
-	width     float64
 	minWidth  float64
 	position  Position
 }
@@ -55,13 +54,13 @@ func fadeIntensity(step float64) float64 {
 	}
 }
 
-func (a alert) render() string {
+func (a alert) render(maxWidth int) string {
 	// Lab-space lerp: foreColor → black over the last 25% of the lifetime.
 	blended := a.foreColor.BlendLab(colorful.Color{}, 1.0-fadeIntensity(a.lerpStep()))
 	col := lipgloss.Color(blended.Hex())
 
 	// Inner content area: border (1 each side) + padding (1 each side) = 4 total overhead
-	maxW := int(a.width)
+	maxW := maxWidth
 	innerWidth := maxW - 4
 	if innerWidth < 1 {
 		innerWidth = 1

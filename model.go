@@ -135,7 +135,6 @@ func (m Model) NewAlertCmd(spec AlertSpec, msg string) tea.Cmd {
 		prefix:    def.Prefix,
 		foreColor: foreColor,
 		style:     m.style,
-		width:     float64(m.width),
 		minWidth:  float64(m.minWidth),
 		position:  pos,
 	}
@@ -157,9 +156,8 @@ func (m Model) Render(content string) string {
 	if contentW < alertMaxW {
 		alertMaxW = contentW
 	}
-	head.width = float64(alertMaxW)
 
-	rendered := head.render()
+	rendered := head.render(alertMaxW)
 	alertW := lipgloss.Width(rendered)
 	alertH := lipgloss.Height(rendered)
 	contentH := lipgloss.Height(content)
