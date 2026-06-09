@@ -8,31 +8,48 @@ import (
 )
 
 type alert struct {
-	message     string
-	deathTime   time.Time
-	prefix      string
-	foreColor   colorful.Color
-	style       lipgloss.Style
-	width       float64
-	minWidth    float64
-	curLerpStep float64
-	position    Position
+	message   string
+	startTime time.Time
+	deathTime time.Time
+	prefix    string
+	foreColor colorful.Color
+	style     lipgloss.Style
+	width     float64
+	minWidth  float64
+	position  Position
 }
 
-// fadeIntensity maps curLerpStep (0→1 over the alert's lifetime) to a
-// color-blend factor with three phases:
+// lerpStep returns a value in [0,1] representing how far through the alert's
+// lifetime we are, derived from startTime and deathTime at call time.
+func (a alert) lerpStep() float64 {
+	duration := a.deathTime.Sub(a.startTime)
+	if duration <= 0 {
+		return 1
+	}
+	step := float64(time.Since(a.startTime)) / float64(duration)
+	if step < 0 {
+		return 0
+	}
+	if step > 1 {
+		return 1
+	}
+	return step
+}
+
+// fadeIntensity maps a lifetime progress value (0→1) to a color-blend factor
+// with three phases:
 //
 //	0.00–0.15  fade in  (0→1)
 //	0.15–0.75  hold     (1)
 //	0.75–1.00  fade out (1→0)
-func (a alert) fadeIntensity() float64 {
+func fadeIntensity(step float64) float64 {
 	const fadeIn = 0.15
 	const fadeOut = 0.75
 	switch {
-	case a.curLerpStep < fadeIn:
-		return a.curLerpStep / fadeIn
-	case a.curLerpStep > fadeOut:
-		return 1.0 - (a.curLerpStep-fadeOut)/(1.0-fadeOut)
+	case step < fadeIn:
+		return step / fadeIn
+	case step > fadeOut:
+		return 1.0 - (step-fadeOut)/(1.0-fadeOut)
 	default:
 		return 1.0
 	}
@@ -40,7 +57,7 @@ func (a alert) fadeIntensity() float64 {
 
 func (a alert) render() string {
 	// Lab-space lerp: foreColor → black over the last 25% of the lifetime.
-	blended := a.foreColor.BlendLab(colorful.Color{}, 1.0-a.fadeIntensity())
+	blended := a.foreColor.BlendLab(colorful.Color{}, 1.0-fadeIntensity(a.lerpStep()))
 	col := lipgloss.Color(blended.Hex())
 
 	// Inner content area: border (1 each side) + padding (1 each side) = 4 total overhead

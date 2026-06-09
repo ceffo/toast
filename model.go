@@ -75,7 +75,9 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case alertMsg:
 		a := msg.a
-		a.deathTime = time.Now().Add(m.duration)
+		now := time.Now()
+		a.startTime = now
+		a.deathTime = now.Add(m.duration)
 		wasEmpty := len(m.queue) == 0
 		q := append([]alert{}, m.queue...)
 		if m.maxDepth > 0 && len(q) >= m.maxDepth {
@@ -98,16 +100,6 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 			}
 			return m, tick()
 		}
-		q := append([]alert{}, m.queue...)
-		elapsed := m.duration - time.Until(q[0].deathTime)
-		step := float64(elapsed) / float64(m.duration)
-		if step < 0 {
-			step = 0
-		} else if step > 1 {
-			step = 1
-		}
-		q[0].curLerpStep = step
-		m.queue = q
 		return m, tick()
 
 	case tea.KeyPressMsg:
