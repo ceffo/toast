@@ -60,7 +60,7 @@ func TestWithQueueDepth_immutable(t *testing.T) {
 
 func TestNewAlertCmd_enqueues(t *testing.T) {
 	m := toast.New(80, toast.FontUnicode, 2*time.Second)
-	cmd := m.NewAlertCmd(toast.InfoAlertUnicode, "hello")
+	cmd := m.NewAlertCmd(toast.InfoAlert, "hello")
 	m2, _ := enqueue(m, cmd)
 	if !m2.HasActiveAlert() {
 		t.Fatal("expected active alert after enqueue")
@@ -82,7 +82,7 @@ func TestUpdate_unknownMsg_noChange(t *testing.T) {
 
 func TestUpdate_tickExpiry(t *testing.T) {
 	m := toast.New(80, toast.FontUnicode, 1*time.Millisecond)
-	cmd := m.NewAlertCmd(toast.InfoAlertUnicode, "short-lived")
+	cmd := m.NewAlertCmd(toast.InfoAlert, "short-lived")
 	m2, tickCmd := enqueue(m, cmd)
 	if !m2.HasActiveAlert() {
 		t.Fatal("alert should be active immediately after enqueue")
@@ -101,7 +101,7 @@ func TestUpdate_tick_startsOnlyWhenQueueWasEmpty(t *testing.T) {
 	m := toast.New(80, toast.FontUnicode, 2*time.Second)
 
 	// First alert: Update must return a tick cmd.
-	cmd := m.NewAlertCmd(toast.InfoAlertUnicode, "first")
+	cmd := m.NewAlertCmd(toast.InfoAlert, "first")
 	_, tickCmd := enqueue(m, cmd)
 	if tickCmd == nil {
 		t.Fatal("expected tick cmd when queue transitions from empty to non-empty")
@@ -121,7 +121,7 @@ func TestRender_noAlert_returnsUnchanged(t *testing.T) {
 func TestRender_withAlert_modifiesContent(t *testing.T) {
 	m := toast.New(80, toast.FontUnicode, 2*time.Second).WithPosition(toast.TopRight)
 	content := strings.Repeat("x", 80) + "\n" + strings.Repeat("x", 80)
-	cmd := m.NewAlertCmd(toast.InfoAlertUnicode, "test alert")
+	cmd := m.NewAlertCmd(toast.InfoAlert, "test alert")
 	m2, _ := enqueue(m, cmd)
 	got := m2.Render(content)
 	if got == content {
@@ -133,7 +133,7 @@ func TestRender_alertAppearsInOutput(t *testing.T) {
 	m := toast.New(80, toast.FontUnicode, 2*time.Second).WithPosition(toast.TopLeft)
 	content := strings.Repeat(" ", 80) + "\n" + strings.Repeat(" ", 80)
 	const alertMsg = "unique-sentinel-xyz"
-	cmd := m.NewAlertCmd(toast.InfoAlertUnicode, alertMsg)
+	cmd := m.NewAlertCmd(toast.InfoAlert, alertMsg)
 	m2, _ := enqueue(m, cmd)
 	got := m2.Render(content)
 	if !strings.Contains(got, alertMsg) {
@@ -152,10 +152,10 @@ func TestQueueDepth_evictsOldest(t *testing.T) {
 	// Wide content so the alert always renders fully.
 	content := strings.Repeat(" ", 80) + "\n" + strings.Repeat(" ", 80)
 
-	cmd1 := m.NewAlertCmd(toast.InfoAlertUnicode, "FIRST-ALERT")
+	cmd1 := m.NewAlertCmd(toast.InfoAlert, "FIRST-ALERT")
 	m, _ = enqueue(m, cmd1)
 
-	cmd2 := m.NewAlertCmd(toast.InfoAlertUnicode, "SECOND-ALERT")
+	cmd2 := m.NewAlertCmd(toast.InfoAlert, "SECOND-ALERT")
 	m, _ = enqueue(m, cmd2)
 
 	got := m.Render(content)
@@ -171,7 +171,7 @@ func TestQueueDepth_evictsOldest(t *testing.T) {
 
 func TestAllowEscToClose_dismissesAlert(t *testing.T) {
 	m := toast.New(80, toast.FontUnicode, 10*time.Second).WithAllowEscToClose()
-	cmd := m.NewAlertCmd(toast.InfoAlertUnicode, "closeable")
+	cmd := m.NewAlertCmd(toast.InfoAlert, "closeable")
 	m2, _ := enqueue(m, cmd)
 	if !m2.HasActiveAlert() {
 		t.Fatal("alert should be active before esc")
@@ -186,7 +186,7 @@ func TestAllowEscToClose_dismissesAlert(t *testing.T) {
 
 func TestAllowEscToClose_disabled_doesNotDismiss(t *testing.T) {
 	m := toast.New(80, toast.FontUnicode, 10*time.Second) // no WithAllowEscToClose
-	cmd := m.NewAlertCmd(toast.InfoAlertUnicode, "persistent")
+	cmd := m.NewAlertCmd(toast.InfoAlert, "persistent")
 	m2, _ := enqueue(m, cmd)
 
 	escMsg := tea.KeyPressMsg{Code: tea.KeyEsc}

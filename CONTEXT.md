@@ -4,13 +4,21 @@
 
 A single notification instance that is rendered as an overlay on top of TUI content for a fixed duration, then dismissed. An Alert is ephemeral — it carries its own expiry time and is never stored after dismissal.
 
+## AlertSpec
+
+The interface accepted by `NewAlertCmd`. Anything that implements `Resolve(FontStyle) AlertDefinition` satisfies it. The two concrete types are `AlertDefinition` (fully specified, ignores font) and `AlertLevel` (font-indexed bundle, resolves to the right variant).
+
 ## AlertDefinition
 
-A reusable, named specification for how a category of Alert looks: foreground color, prefix symbol, and preferred position. Passed directly to `NewAlertCmd` at the call site — not stored in a registry. Built-in definitions (`InfoAlert`, `WarnAlert`, `ErrorAlert`, `DebugAlert`) are package-level variables.
+A fully specified visual configuration for one Alert: foreground color, prefix symbol, and optional preferred position. Satisfies `AlertSpec` by returning itself from `Resolve`. Use for custom alert types where all variants look the same regardless of font.
+
+## AlertLevel
+
+A font-style-indexed bundle of three `AlertDefinition`s — one each for ASCII, Unicode, and NerdFont. Satisfies `AlertSpec`; `Resolve` picks the variant matching the model's `FontStyle`. Built-in levels (`InfoAlert`, `WarnAlert`, `ErrorAlert`, `DebugAlert`) are package-level variables.
 
 ## FontStyle
 
-An enum that controls the prefix symbol class used by built-in AlertDefinitions: `FontASCII` (works everywhere), `FontUnicode` (works in most terminals), `FontNerdFont` (requires NerdFont installation).
+An enum stored on `Model` (set via `New()`) that controls which glyph class is used when resolving an `AlertLevel`: `FontASCII` (works everywhere), `FontUnicode` (works in most terminals), `FontNerdFont` (requires NerdFont installation). Has no effect when a fully specified `AlertDefinition` is passed directly to `NewAlertCmd`.
 
 ## Model
 

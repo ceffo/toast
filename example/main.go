@@ -78,13 +78,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		// 4 built-in alert types
 		case "i":
-			cmds = append(cmds, m.toast.NewAlertCmd(toast.InfoAlertUnicode, "Info: everything is running smoothly"))
+			cmds = append(cmds, m.toast.NewAlertCmd(toast.InfoAlert, "Info: everything is running smoothly"))
 		case "w":
-			cmds = append(cmds, m.toast.NewAlertCmd(toast.WarnAlertUnicode, "Warn: disk usage is above 80%"))
+			cmds = append(cmds, m.toast.NewAlertCmd(toast.WarnAlert, "Warn: disk usage is above 80%"))
 		case "e":
-			cmds = append(cmds, m.toast.NewAlertCmd(toast.ErrorAlertUnicode, "Error: connection refused on port 8080"))
+			cmds = append(cmds, m.toast.NewAlertCmd(toast.ErrorAlert, "Error: connection refused on port 8080"))
 		case "d":
-			cmds = append(cmds, m.toast.NewAlertCmd(toast.DebugAlertUnicode, "Debug: goroutines=42 heap=128MB"))
+			cmds = append(cmds, m.toast.NewAlertCmd(toast.DebugAlert, "Debug: goroutines=42 heap=128MB"))
 
 		// Custom AlertDefinition
 		case "s":
@@ -94,7 +94,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "b":
 			for k := 1; k <= 5; k++ {
 				k := k
-				cmds = append(cmds, m.toast.NewAlertCmd(toast.InfoAlertUnicode, fmt.Sprintf("Burst alert #%d of 5", k)))
+				cmds = append(cmds, m.toast.NewAlertCmd(toast.InfoAlert, fmt.Sprintf("Burst alert #%d of 5", k)))
 			}
 
 		// Duration — + increases, - decreases (step: 500ms, range: 500ms–10s)

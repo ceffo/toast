@@ -26,13 +26,13 @@ type model struct {
 
 // sequence of demo steps: each fires an alert then waits before the next
 var steps = []struct {
-	def toast.AlertDefinition
+	def toast.AlertSpec
 	msg string
 }{
-	{toast.InfoAlertUnicode, "Info: everything is running smoothly"},
-	{toast.WarnAlertUnicode, "Warn: disk usage is above 80%"},
-	{toast.ErrorAlertUnicode, "Error: connection refused on port 8080"},
-	{toast.DebugAlertUnicode, "Debug: goroutines=42  heap=128MB"},
+	{toast.InfoAlert, "Info: everything is running smoothly"},
+	{toast.WarnAlert, "Warn: disk usage is above 80%"},
+	{toast.ErrorAlert, "Error: connection refused on port 8080"},
+	{toast.DebugAlert, "Debug: goroutines=42  heap=128MB"},
 	{SuccessAlert, "Success: deployment completed in 4.2s"},
 }
 
@@ -89,9 +89,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			// fire burst
 			for k := 1; k <= burstCount; k++ {
 				k := k
-				def := toast.InfoAlertUnicode
+				def := toast.AlertSpec(toast.InfoAlert)
 				if k%2 == 0 {
-					def = toast.WarnAlertUnicode
+					def = toast.WarnAlert
 				}
 				cmds = append(cmds, m.toast.NewAlertCmd(def, fmt.Sprintf("Burst alert %d of %d", k, burstCount)))
 			}

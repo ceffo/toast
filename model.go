@@ -22,15 +22,17 @@ type Model struct {
 	minWidth        int
 	duration        time.Duration
 	position        Position
+	font            FontStyle
 	allowEscToClose bool
 	style           lipgloss.Style
 }
 
-// New creates a Model. font selects which AlertDefinition variants the caller
-// should pair with this model (the model itself is font-agnostic).
-func New(width int, _ FontStyle, duration time.Duration) Model {
+// New creates a Model. font is stored and used by NewAlertCmd to resolve the
+// correct AlertDefinition variant when an AlertLevel is passed.
+func New(width int, font FontStyle, duration time.Duration) Model {
 	return Model{
 		width:    width,
+		font:     font,
 		duration: duration,
 		maxDepth: 5,
 		style:    lipgloss.NewStyle(),
@@ -126,8 +128,11 @@ func (m Model) HasActiveAlert() bool {
 }
 
 // NewAlertCmd returns a tea.Cmd that enqueues an alert.
-// Uses def.Position if valid, otherwise falls back to the model's position.
-func (m Model) NewAlertCmd(def AlertDefinition, msg string) tea.Cmd {
+// spec may be an AlertLevel (resolved using the model's FontStyle) or a fully
+// specified AlertDefinition. Uses def.Position if valid, otherwise falls back
+// to the model's position.
+func (m Model) NewAlertCmd(spec AlertSpec, msg string) tea.Cmd {
+	def := spec.Resolve(m.font)
 	pos := def.Position
 	if !pos.IsValid() {
 		pos = m.position
