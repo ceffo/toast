@@ -7,6 +7,8 @@ Toast-style alert overlays for [BubbleTea v2](https://charm.land/bubbletea/v2) T
 Alerts appear at a configurable corner of your terminal UI, animate with a color fade, and
 disappear automatically after a set duration — with no host-side timer management required.
 
+![toast demo](docs/demo.gif)
+
 ## Install
 
 ```bash
