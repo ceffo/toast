@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.2.1] - 2026-06-09
+
+### Fixed
+
+- Alert timers now start when an alert becomes visible, not when it is enqueued — previously a queued alert's display duration was partially consumed while it waited behind another alert.
+
 ## [0.2.0] - 2026-06-09
 
 ### Added

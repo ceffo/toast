@@ -12,5 +12,5 @@ test:
 check: lint test build
 
 # bumps version, tags, and pushes (patch|minor|major)
-release bump="patch": check
-    bash scripts/release.sh {{bump}}
+release bump="patch" *args="": check
+    bash scripts/release.sh {{bump}} {{args}}
