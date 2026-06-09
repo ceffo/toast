@@ -1,10 +1,10 @@
 # toast
 
 <p>
-  <img src="https://github.com/ceffo/toast/releases/download/v0.1.0/header.png" alt="toast" width="400"><br>
+  <img src="https://raw.githubusercontent.com/ceffo/toast/main/docs/images/header.png" alt="toast" width="700"><br>
   <a href="https://github.com/ceffo/toast/releases"><img src="https://img.shields.io/github/release/ceffo/toast.svg" alt="Latest Release"></a>
   <a href="https://github.com/ceffo/toast/actions/workflows/ci.yml"><img src="https://github.com/ceffo/toast/actions/workflows/ci.yml/badge.svg" alt="Build Status"></a>
-  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License"></a>
+  <a href="https://github.com/ceffo/toast/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License"></a>
 </p>
 
 Toast-style alert overlays for [BubbleTea v2](https://charm.land/bubbletea/v2) TUI applications.
