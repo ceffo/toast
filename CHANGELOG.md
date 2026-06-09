@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.2.0] - 2026-06-09
+
+### Added
+
+- `AlertLevel` type and `AlertSpec` interface for font-aware alert dispatch — pass `InfoAlert`, `WarnAlert`, `ErrorAlert`, or `DebugAlert` to `NewAlertCmd` and the model resolves the correct glyph variant (ASCII / Unicode / NerdFont) automatically based on the `FontStyle` given to `New()`.
+- Custom `AlertDefinition` values continue to work unchanged — they satisfy `AlertSpec` by returning themselves.
+- Fixed missing NerdFont glyph on `InfoAlert` (was empty; now `nf-md-information` U+F02FC).
+
+### Changed
+
+- LerpAnimation step is now derived from wall-clock time at render, rather than being advanced per tick — animation is continuous instead of 50 ms-quantized and all animation logic concentrates in `alert.go`.
+- Alert `width` is now a render-time parameter rather than queued state — the value previously stored at enqueue was always overwritten before rendering.
+
 ## [0.1.0] - 2026-06-05
 
 Initial release.
