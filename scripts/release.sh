@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# Usage: scripts/release.sh [patch|minor|major] [--force] [--dry-run]
+# Reads the latest git tag, bumps the requested component, tags, and pushes.
+# Bootstraps to v0.1.0 if no tags exist.
+# --force   skips the gum confirmation prompt (for non-interactive environments).
+# --dry-run prints the next version without tagging or pushing.
+set -euo pipefail
+
+bump=${1:-patch}
+force=false
+dry_run=false
+for arg in "$@"; do
+  [[ "$arg" == "--force" ]] && force=true
+  [[ "$arg" == "--dry-run" ]] && dry_run=true
+done
+
+# Abort if local main has unpushed commits.
+unpushed=$(git log origin/main..main --oneline 2>/dev/null | wc -l | tr -d ' ')
+if [[ "$unpushed" -gt 0 ]]; then
+  echo "error: $unpushed unpushed commit(s) on main — push first, then release" >&2
+  exit 1
+fi
+
+latest=$(git tag --sort=-v:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -1 || true)
+
+if [[ -z "$latest" ]]; then
+  next="v0.1.0"
+else
+  IFS='.' read -r major minor patch <<< "${latest#v}"
+  case "$bump" in
+    major) major=$((major + 1)); minor=0; patch=0 ;;
+    minor) minor=$((minor + 1)); patch=0 ;;
+    patch) patch=$((patch + 1)) ;;
+    *) echo "usage: release.sh [patch|minor|major]" >&2; exit 1 ;;
+  esac
+  next="v${major}.${minor}.${patch}"
+fi
+
+if [[ "$dry_run" == true ]]; then
+  echo "dry-run: would tag and push $next"
+  exit 0
+fi
+if [[ "$force" == false ]]; then
+  gum confirm --default=false "Tag and push $next?" || { echo "Aborted."; exit 1; }
+fi
+echo "Tagging $next" >&2
+git tag "$next"
+git push origin "$next"

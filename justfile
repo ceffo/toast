@@ -11,6 +11,6 @@ test:
 
 check: lint test build
 
-release version: check
-    git tag -a "v{{version}}" -m "Release v{{version}}"
-    git push origin "v{{version}}"
+# bumps version, tags, and pushes (patch|minor|major)
+release bump="patch": check
+    bash scripts/release.sh {{bump}}
