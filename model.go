@@ -70,14 +70,22 @@ func tick() tea.Cmd {
 	})
 }
 
+// activateHead stamps startTime and deathTime on the head alert so its
+// duration begins when it becomes visible, not when it was enqueued.
+func (m Model) activateHead() Model {
+	q := append([]alert{}, m.queue...)
+	now := time.Now()
+	q[0].startTime = now
+	q[0].deathTime = now.Add(m.duration)
+	m.queue = q
+	return m
+}
+
 // Update handles alertMsg, tickMsg, and esc key.
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case alertMsg:
 		a := msg.a
-		now := time.Now()
-		a.startTime = now
-		a.deathTime = now.Add(m.duration)
 		wasEmpty := len(m.queue) == 0
 		q := append([]alert{}, m.queue...)
 		if m.maxDepth > 0 && len(q) >= m.maxDepth {
@@ -85,6 +93,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		}
 		m.queue = append(q, a)
 		if wasEmpty {
+			m = m.activateHead()
 			return m, tick()
 		}
 		return m, nil
@@ -98,6 +107,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 			if len(m.queue) == 0 {
 				return m, nil
 			}
+			m = m.activateHead()
 			return m, tick()
 		}
 		return m, tick()
@@ -108,6 +118,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 			if len(m.queue) == 0 {
 				return m, nil
 			}
+			m = m.activateHead()
 			return m, tick()
 		}
 	}

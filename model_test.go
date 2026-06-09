@@ -97,6 +97,36 @@ func TestUpdate_tickExpiry(t *testing.T) {
 	}
 }
 
+func TestUpdate_secondAlert_getsFullDuration(t *testing.T) {
+	// Regression: deathTime was set at enqueue time, so a queued alert's
+	// duration was already partially elapsed by the time it became visible.
+	const duration = 200 * time.Millisecond
+	m := toast.New(80, toast.FontUnicode, duration)
+
+	// Enqueue two alerts back-to-back.
+	cmd1 := m.NewAlertCmd(toast.InfoAlert, "first")
+	m, tickCmd := enqueue(m, cmd1)
+
+	cmd2 := m.NewAlertCmd(toast.InfoAlert, "second")
+	m, _ = enqueue(m, cmd2)
+
+	// Expire the first alert.
+	time.Sleep(duration + 10*time.Millisecond)
+	tickMsg := tickCmd()
+	m, tickCmd = m.Update(tickMsg)
+	if !m.HasActiveAlert() {
+		t.Fatal("second alert should now be active")
+	}
+
+	// The second alert's duration must not have started at its enqueue time.
+	// Fire a tick immediately — it should NOT expire yet.
+	tickMsg = tickCmd()
+	m2, _ := m.Update(tickMsg)
+	if !m2.HasActiveAlert() {
+		t.Fatal("second alert expired immediately — its timer started at enqueue, not at display")
+	}
+}
+
 func TestUpdate_tick_startsOnlyWhenQueueWasEmpty(t *testing.T) {
 	m := toast.New(80, toast.FontUnicode, 2*time.Second)
 
