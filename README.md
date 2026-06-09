@@ -1,13 +1,18 @@
 # toast
 
-[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+<p>
+  <img src="https://github.com/ceffo/toast/releases/download/v0.1.0/header.png" alt="toast" width="400"><br>
+  <a href="https://github.com/ceffo/toast/releases"><img src="https://img.shields.io/github/release/ceffo/toast.svg" alt="Latest Release"></a>
+  <a href="https://github.com/ceffo/toast/actions/workflows/ci.yml"><img src="https://github.com/ceffo/toast/actions/workflows/ci.yml/badge.svg" alt="Build Status"></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License"></a>
+</p>
 
 Toast-style alert overlays for [BubbleTea v2](https://charm.land/bubbletea/v2) TUI applications.
 
 Alerts appear at a configurable corner of your terminal UI, animate with a color fade, and
 disappear automatically after a set duration — with no host-side timer management required.
 
-![toast demo](docs/demo.gif)
+![toast demo](https://github.com/ceffo/toast/releases/download/v0.1.0/demo.gif)
 
 ## Install
 
