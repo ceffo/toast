@@ -4,9 +4,10 @@ import (
 	"testing"
 
 	"github.com/ceffo/toast"
+	"github.com/stretchr/testify/assert"
 )
 
-func Test_alertCoords(t *testing.T) {
+func TestAlertCoords(t *testing.T) {
 	const cW, cH = 80, 24
 	const aW, aH = 20, 4
 
@@ -14,32 +15,54 @@ func Test_alertCoords(t *testing.T) {
 		pos          toast.Position
 		wantX, wantY int
 	}{
-		{toast.TopLeft, 0, 0},
-		{toast.TopCenter, (cW - aW) / 2, 0},          // 30, 0
-		{toast.TopRight, cW - aW, 0},                 // 60, 0
-		{toast.BottomLeft, 0, cH - aH},               // 0, 20
-		{toast.BottomCenter, (cW - aW) / 2, cH - aH}, // 30, 20
-		{toast.BottomRight, cW - aW, cH - aH},        // 60, 20
+		{pos: toast.TopLeft, wantX: 0, wantY: 0},
+		{pos: toast.TopCenter, wantX: (cW - aW) / 2, wantY: 0},
+		{pos: toast.TopRight, wantX: cW - aW, wantY: 0},
+		{pos: toast.BottomLeft, wantX: 0, wantY: cH - aH},
+		{pos: toast.BottomCenter, wantX: (cW - aW) / 2, wantY: cH - aH},
+		{pos: toast.BottomRight, wantX: cW - aW, wantY: cH - aH},
 	}
 
 	for _, tc := range tests {
 		t.Run(string(tc.pos), func(t *testing.T) {
 			x, y := toast.AlertCoords(tc.pos, cW, cH, aW, aH)
-			if x != tc.wantX || y != tc.wantY {
-				t.Errorf("AlertCoords(%s, %d, %d, %d, %d) = (%d, %d), want (%d, %d)",
-					tc.pos, cW, cH, aW, aH, x, y, tc.wantX, tc.wantY)
-			}
+			assert.Equal(t, tc.wantX, x)
+			assert.Equal(t, tc.wantY, y)
 		})
 	}
 }
 
-func Test_alertCoords_clampNegative(t *testing.T) {
-	// Alert wider/taller than content: x and y must not go negative.
-	x, y := toast.AlertCoords(toast.TopRight, 10, 5, 20, 10)
-	if x < 0 {
-		t.Errorf("x = %d, want >= 0", x)
+func TestAlertCoords_clampNegative(t *testing.T) {
+	tests := []struct {
+		name               string
+		pos                toast.Position
+		contentW, contentH int
+		alertW, alertH     int
+	}{
+		{
+			name:     "alert_wider_than_content_top_right",
+			pos:      toast.TopRight,
+			contentW: 10, contentH: 5,
+			alertW: 20, alertH: 10,
+		},
+		{
+			name:     "alert_taller_than_content_bottom_left",
+			pos:      toast.BottomLeft,
+			contentW: 80, contentH: 2,
+			alertW: 20, alertH: 10,
+		},
+		{
+			name:     "alert_larger_in_both_dimensions",
+			pos:      toast.BottomRight,
+			contentW: 5, contentH: 3,
+			alertW: 20, alertH: 10,
+		},
 	}
-	if y < 0 {
-		t.Errorf("y = %d, want >= 0", y)
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			x, y := toast.AlertCoords(tc.pos, tc.contentW, tc.contentH, tc.alertW, tc.alertH)
+			assert.GreaterOrEqual(t, x, 0, "x must not be negative")
+			assert.GreaterOrEqual(t, y, 0, "y must not be negative")
+		})
 	}
 }
