@@ -76,7 +76,11 @@ func (m Model) activateHead() Model {
 	q := append([]alert{}, m.queue...)
 	now := time.Now()
 	q[0].startTime = now
-	q[0].deathTime = now.Add(m.duration)
+	d := m.duration
+	if q[0].duration > 0 {
+		d = q[0].duration
+	}
+	q[0].deathTime = now.Add(d)
 	m.queue = q
 	return m
 }
@@ -130,11 +134,26 @@ func (m Model) HasActiveAlert() bool {
 	return len(m.queue) > 0
 }
 
+// AlertOption customises a single alert passed to NewAlertCmd.
+type AlertOption func(*alert)
+
+// WithAlertDuration makes this one alert stay visible for d instead of the
+// model's default duration. A zero or negative d keeps the model default.
+func WithAlertDuration(d time.Duration) AlertOption {
+	return func(a *alert) {
+		if d > 0 {
+			a.duration = d
+		}
+	}
+}
+
 // NewAlertCmd returns a tea.Cmd that enqueues an alert.
+// opts adjust this alert only (e.g. WithAlertDuration); existing calls
+// without options behave as before.
 // spec may be an AlertLevel (resolved using the model's FontStyle) or a fully
 // specified AlertDefinition. Uses def.Position if valid, otherwise falls back
 // to the model's position.
-func (m Model) NewAlertCmd(spec AlertSpec, msg string) tea.Cmd {
+func (m Model) NewAlertCmd(spec AlertSpec, msg string, opts ...AlertOption) tea.Cmd {
 	def := spec.Resolve(m.font)
 	pos := def.Position
 	if !pos.IsValid() {
@@ -148,6 +167,9 @@ func (m Model) NewAlertCmd(spec AlertSpec, msg string) tea.Cmd {
 		style:     m.style,
 		minWidth:  float64(m.minWidth),
 		position:  pos,
+	}
+	for _, opt := range opts {
+		opt(&a)
 	}
 	return func() tea.Msg {
 		return alertMsg{a: a}

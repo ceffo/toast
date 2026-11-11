@@ -16,6 +16,7 @@ type alert struct {
 	style     lipgloss.Style
 	minWidth  float64
 	position  Position
+	duration  time.Duration // zero: use the model default
 }
 
 // lerpStep returns a value in [0,1] representing how far through the alert's

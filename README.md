@@ -147,6 +147,9 @@ return tea.View{Content: m.toast.Render(content), AltScreen: true}
 
 // 4. Fire an alert from any Update branch
 cmds = append(cmds, m.toast.NewAlertCmd(toast.WarnAlertUnicode, "something happened"))
+
+// Keep one alert on screen longer than the model's default duration
+cmds = append(cmds, m.toast.NewAlertCmd(toast.ErrorAlertUnicode, "connection refused", toast.WithAlertDuration(8*time.Second)))
 ```
 
 ### ESC guard
