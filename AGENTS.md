@@ -14,6 +14,8 @@ This file provides guidance to AI Agents when working with code in this reposito
 
 **Commits**: follow Conventional Commits — `type(scope): short description`. Types: `feat`, `fix`, `refactor`, `test`, `chore`, `docs`. Scope is the file or concept being changed (e.g. `model`, `wrap`, `alert`, `example`). No task IDs, story IDs, or internal tracking references in commit messages.
 
+Releases are automatic: CI tags and releases on merge from the PR title (`feat` minor, `fix`/`refactor` patch, `docs`/`test`/`chore`/`ci` none). See [`docs/versioning.md`](docs/versioning.md); never tag by hand.
+
 Examples:
 ```
 feat(model): add WithAllowEscToClose builder
