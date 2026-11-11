@@ -5,6 +5,12 @@ on:
     branches: ["main"]
   pull_request:
     branches: ["main"]
+  workflow_dispatch:
+    inputs:
+      backfill:
+        description: "Create the missing GitHub Releases for v0.2.0, v0.2.1 and v0.3.0 from CHANGELOG.md (once)"
+        type: boolean
+        default: false
 
 jobs:
   check:
@@ -33,3 +39,68 @@ jobs:
 
       - name: Build
         run: just build
+
+      # The release scripts (docs/versioning.md), with `gh` stubbed: no network.
+      - name: Test the release scripts
+        run: just test-scripts
+
+  # The release (docs/versioning.md): on a merge to main, after `check` passed, no human step. The version comes from
+  # the conventional-commit titles since the last tag; docs/test/chore/ci only, or the `no-release` label, makes none
+  # and the job stays green with a notice. The tag vX.Y.Z and the GitHub Release (notes generated from the PR titles,
+  # no asset: Go consumers fetch the tag through the module proxy) are made with the job's token, so they start no
+  # workflow. A tag is never moved; a re-run on a released commit changes nothing.
+  release:
+    needs: check
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    # Two quick merges never take the same number: runs queue one at a time and are never cancelled. GitHub keeps only
+    # the newest pending run, so the older one may never start; if it does start after a newer release, the version
+    # script ends it green (superseded) and moves no tag.
+    concurrency:
+      group: release
+      cancel-in-progress: false
+    # contents: write only here (the tag and the Release); pull-requests: read for the labels of the merged PRs.
+    permissions:
+      contents: write
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # The whole history and the tags: the version is computed from the commits since the last tag. The token is
+          # not left in the checkout; the steps below pass it to `gh` themselves.
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Compute the version
+        id: version
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: scripts/release-version.sh next "$GITHUB_SHA"
+
+      - name: Tag and release
+        if: steps.version.outputs.release == 'true' && steps.version.outputs.superseded != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.version }}
+          LAST: ${{ steps.version.outputs.last }}
+        run: scripts/version-tag.sh "$VERSION" "$GITHUB_SHA" ${LAST:+"$LAST"}
+
+  # One-off: a manual run with backfill=true makes the Releases of the tags made by hand before CI released. Not part
+  # of the push flow; a re-run changes nothing (scripts/backfill-releases.sh).
+  backfill:
+    if: github.event_name == 'workflow_dispatch' && inputs.backfill && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: release
+      cancel-in-progress: false
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Create the missing Releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: scripts/backfill-releases.sh v0.2.0 v0.2.1 v0.3.0

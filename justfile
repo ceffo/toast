@@ -9,8 +9,11 @@ lint:
 test:
     go test ./... -race -count=1
 
-check: lint test build
+# shell tests of the release scripts (docs/versioning.md); need git and jq
+test-scripts:
+    bash scripts/test-release-version.sh
+    bash scripts/test-version-tag.sh
+    bash scripts/test-backfill-releases.sh
+    bash scripts/test-check-pr-title.sh
 
-# bumps version, tags, and pushes (patch|minor|major)
-release bump="patch" *args="": check
-    bash scripts/release.sh {{bump}} {{args}}
+check: lint test build test-scripts

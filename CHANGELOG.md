@@ -1,5 +1,8 @@
 # Changelog
 
+> **Frozen at v0.3.0.** Releases are made by CI from conventional-commit PR titles; their notes are on the
+> [Releases page](https://github.com/ceffo/toast/releases). See [`docs/versioning.md`](docs/versioning.md).
+
 ## [0.3.0] - 2026-11-11
 
 ### Added
