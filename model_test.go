@@ -149,6 +149,49 @@ func TestUpdate_secondAlert_getsFullDuration(t *testing.T) {
 	assert.True(t, m2.HasActiveAlert(), "second alert expired immediately — timer started at enqueue, not at display")
 }
 
+func TestNewAlertCmd_perAlertDuration_overridesModelDefault(t *testing.T) {
+	m := toast.New(80, toast.FontUnicode, 1*time.Millisecond)
+	m, tickCmd := enqueue(m, m.NewAlertCmd(toast.ErrorAlert, "long", toast.WithAlertDuration(time.Hour)))
+
+	time.Sleep(5 * time.Millisecond)
+	m, _ = m.Update(tickCmd())
+	assert.True(t, m.HasActiveAlert(), "alert with its own long duration must outlive the model default")
+}
+
+func TestNewAlertCmd_perAlertDuration_shorterThanModelDefault(t *testing.T) {
+	m := toast.New(80, toast.FontUnicode, time.Hour)
+	m, tickCmd := enqueue(m, m.NewAlertCmd(toast.InfoAlert, "short", toast.WithAlertDuration(time.Millisecond)))
+
+	time.Sleep(5 * time.Millisecond)
+	m, _ = m.Update(tickCmd())
+	assert.False(t, m.HasActiveAlert(), "alert with its own short duration must expire before the model default")
+}
+
+func TestNewAlertCmd_perAlertDuration_appliesWhenQueuedBehindAnother(t *testing.T) {
+	m := toast.New(80, toast.FontUnicode, 5*time.Millisecond)
+	m, tickCmd := enqueue(m, m.NewAlertCmd(toast.InfoAlert, "first"))
+	m, _ = enqueue(m, m.NewAlertCmd(toast.ErrorAlert, "second", toast.WithAlertDuration(time.Hour)))
+
+	time.Sleep(10 * time.Millisecond)
+	m, tickCmd = m.Update(tickCmd()) // first expires, second becomes head
+	require.True(t, m.HasActiveAlert())
+
+	time.Sleep(10 * time.Millisecond)
+	m, _ = m.Update(tickCmd())
+	assert.True(t, m.HasActiveAlert(), "second alert must use its own duration once it becomes visible")
+}
+
+func TestWithAlertDuration_nonPositive_keepsModelDefault(t *testing.T) {
+	for _, d := range []time.Duration{0, -time.Second} {
+		m := toast.New(80, toast.FontUnicode, 1*time.Millisecond)
+		m, tickCmd := enqueue(m, m.NewAlertCmd(toast.InfoAlert, "x", toast.WithAlertDuration(d)))
+
+		time.Sleep(5 * time.Millisecond)
+		m, _ = m.Update(tickCmd())
+		assert.False(t, m.HasActiveAlert(), "duration %v must fall back to the model default", d)
+	}
+}
+
 func TestUpdate_firstAlert_startsTickLoop(t *testing.T) {
 	m := toast.New(80, toast.FontUnicode, 2*time.Second)
 	_, tickCmd := enqueue(m, m.NewAlertCmd(toast.InfoAlert, "first"))

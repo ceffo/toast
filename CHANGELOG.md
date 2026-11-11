@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.0] - 2026-11-11
+
+### Added
+
+- `WithAlertDuration` option for `NewAlertCmd`: one alert can stay visible longer or shorter than the model's default duration (e.g. keep errors on screen longer). `NewAlertCmd` now takes optional `...AlertOption` arguments; existing calls compile and behave unchanged, and a zero or negative duration keeps the model default.
+
 ## [0.2.1] - 2026-06-09
 
 ### Fixed
